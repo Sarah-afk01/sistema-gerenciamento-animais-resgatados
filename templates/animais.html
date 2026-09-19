@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Animais | Resgate Animal{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">Cadastros</span>
+        <h1>Animais resgatados</h1>
+        <p>Consulte, filtre e atualize os registros.</p>
+    </div>
+    <a class="button" href="{{ url_for('novo_animal') }}">+ Cadastrar animal</a>
+</div>
+
+<form class="filters panel" method="GET">
+    <div class="field grow">
+        <label for="busca">Buscar</label>
+        <input type="text" id="busca" name="busca" value="{{ busca }}" placeholder="Nome, espécie, raça ou responsável">
+    </div>
+
+    <div class="field">
+        <label for="status">Situação</label>
+        <select id="status" name="status">
+            <option value="">Todas</option>
+            {% for opcao in status_options %}
+                <option value="{{ opcao }}" {% if status_filtro == opcao %}selected{% endif %}>{{ opcao }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="filter-actions">
+        <button class="button" type="submit">Filtrar</button>
+        <a class="button button-secondary" href="{{ url_for('listar_animais') }}">Limpar</a>
+    </div>
+</form>
+
+<section class="panel">
+    {% if animais %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Animal</th>
+                        <th>Espécie</th>
+                        <th>Resgate</th>
+                        <th>Situação</th>
+                        <th>Responsável</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for animal in animais %}
+                        <tr>
+                            <td>
+                                <div class="table-animal">
+                                    {% if animal.foto %}
+                                        <img src="{{ url_for('static', filename='uploads/' + animal.foto) }}" alt="">
+                                    {% else %}
+                                        <div class="mini-placeholder">🐾</div>
+                                    {% endif %}
+                                    <strong>{{ animal.nome }}</strong>
+                                </div>
+                            </td>
+                            <td>{{ animal.especie }}{% if animal.raca %}<small>{{ animal.raca }}</small>{% endif %}</td>
+                            <td>{{ animal.data_resgate or "—" }}{% if animal.local_resgate %}<small>{{ animal.local_resgate }}</small>{% endif %}</td>
+                            <td><span class="badge">{{ animal.status }}</span></td>
+                            <td>{{ animal.responsavel or "—" }}</td>
+                            <td class="actions">
+                                <a href="{{ url_for('detalhe_animal', animal_id=animal.id) }}">Ver</a>
+                                <a href="{{ url_for('editar_animal', animal_id=animal.id) }}">Editar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🔎</div>
+            <h3>Nenhum cadastro encontrado</h3>
+            <p>Tente alterar os filtros ou faça um novo cadastro.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

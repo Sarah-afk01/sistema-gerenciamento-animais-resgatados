@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}{{ animal.nome }} | Resgate Animal{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">Cadastro #{{ animal.id }}</span>
+        <h1>{{ animal.nome }}</h1>
+        <p>{{ animal.especie }}{% if animal.raca %} • {{ animal.raca }}{% endif %}</p>
+    </div>
+    <div class="heading-actions">
+        <a class="button button-secondary" href="{{ url_for('editar_animal', animal_id=animal.id) }}">Editar</a>
+        <form method="POST" action="{{ url_for('excluir_animal', animal_id=animal.id) }}" onsubmit="return confirmarExclusao('Excluir permanentemente o cadastro de {{ animal.nome }}?')">
+            <button class="button button-danger" type="submit">Excluir</button>
+        </form>
+    </div>
+</div>
+
+<div class="detail-layout">
+    <aside class="panel profile-card">
+        <div class="profile-photo">
+            {% if animal.foto %}
+                <img src="{{ url_for('static', filename='uploads/' + animal.foto) }}" alt="Foto de {{ animal.nome }}">
+            {% else %}
+                <div class="photo-placeholder large">🐾</div>
+            {% endif %}
+        </div>
+
+        <span class="badge badge-large">{{ animal.status }}</span>
+
+        <dl class="info-list">
+            <div><dt>Sexo</dt><dd>{{ animal.sexo or "Não informado" }}</dd></div>
+            <div><dt>Idade</dt><dd>{{ animal.idade_aproximada or "Não informada" }}</dd></div>
+            <div><dt>Porte</dt><dd>{{ animal.porte or "Não informado" }}</dd></div>
+            <div><dt>Cor</dt><dd>{{ animal.cor or "Não informada" }}</dd></div>
+        </dl>
+    </aside>
+
+    <div class="detail-main">
+        <section class="panel">
+            <span class="eyebrow">Resgate</span>
+            <h2>Informações do resgate</h2>
+
+            <dl class="info-grid">
+                <div><dt>Data</dt><dd>{{ animal.data_resgate or "Não informada" }}</dd></div>
+                <div><dt>Local</dt><dd>{{ animal.local_resgate or "Não informado" }}</dd></div>
+                <div class="full"><dt>Condições encontradas</dt><dd>{{ animal.condicoes_resgate or "Nenhuma informação registrada." }}</dd></div>
+            </dl>
+        </section>
+
+        <section class="panel">
+            <span class="eyebrow">Responsável</span>
+            <h2>Acompanhamento atual</h2>
+
+            <dl class="info-grid">
+                <div><dt>Responsável</dt><dd>{{ animal.responsavel or "Não informado" }}</dd></div>
+                <div><dt>Contato</dt><dd>{{ animal.contato_responsavel or "Não informado" }}</dd></div>
+                <div class="full"><dt>Observações</dt><dd>{{ animal.observacoes or "Nenhuma observação registrada." }}</dd></div>
+            </dl>
+        </section>
+
+        <section class="panel">
+            <span class="eyebrow">Cuidados</span><h2>Saúde e identificação</h2>
+            <dl class="info-grid">
+                <div><dt>Castrado</dt><dd>{{ animal.castrado or "Não informado" }}</dd></div>
+                <div><dt>Vacinação</dt><dd>{{ animal.vacinado or "Não informado" }}</dd></div>
+                <div><dt>Vermifugado</dt><dd>{{ animal.vermifugado or "Não informado" }}</dd></div>
+                <div><dt>Microchip</dt><dd>{{ animal.microchip or "Não informado" }}</dd></div>
+                <div class="full"><dt>Necessidades especiais</dt><dd>{{ animal.necessidades_especiais or "Nenhuma informação registrada." }}</dd></div>
+            </dl>
+        </section>
+
+        {% if animal.adotante_nome or animal.data_adocao %}
+        <section class="panel adoption-highlight">
+            <span class="eyebrow">Adoção</span><h2>Dados do adotante</h2>
+            <dl class="info-grid">
+                <div><dt>Adotante</dt><dd>{{ animal.adotante_nome or "Não informado" }}</dd></div>
+                <div><dt>Contato</dt><dd>{{ animal.adotante_contato or "Não informado" }}</dd></div>
+                <div><dt>Data da adoção</dt><dd>{{ animal.data_adocao or "Não informada" }}</dd></div>
+            </dl>
+        </section>
+        {% endif %}
+
+        <section class="panel">
+            <span class="eyebrow">Saúde</span>
+            <h2>Histórico veterinário</h2>
+
+            <form class="inline-form" method="POST" action="{{ url_for('adicionar_historico', animal_id=animal.id) }}">
+                <div class="field">
+                    <label for="data_atendimento">Data *</label>
+                    <input required type="date" id="data_atendimento" name="data_atendimento">
+                </div>
+
+                <div class="field">
+                    <label for="tipo_atendimento">Tipo *</label>
+                    <input required type="text" id="tipo_atendimento" name="tipo_atendimento" placeholder="Consulta, vacina, cirurgia...">
+                </div>
+
+                <div class="field">
+                    <label for="veterinario">Veterinário/Clínica</label>
+                    <input type="text" id="veterinario" name="veterinario">
+                </div>
+
+                <div class="field full">
+                    <label for="descricao">Descrição *</label>
+                    <textarea required id="descricao" name="descricao" rows="3"></textarea>
+                </div>
+
+                <div class="full">
+                    <button class="button" type="submit">Adicionar registro</button>
+                </div>
+            </form>
+
+            {% if historico %}
+                <div class="timeline">
+                    {% for registro in historico %}
+                        <article class="timeline-item">
+                            <div>
+                                <span class="timeline-date">{{ registro.data_atendimento }}</span>
+                                <h3>{{ registro.tipo_atendimento }}</h3>
+                                <p>{{ registro.descricao }}</p>
+                                {% if registro.veterinario %}
+                                    <small>{{ registro.veterinario }}</small>
+                                {% endif %}
+                            </div>
+                            <form method="POST" action="{{ url_for('excluir_historico', registro_id=registro.id) }}" onsubmit="return confirmarExclusao('Excluir este registro veterinário?')">
+                                <button class="link-danger" type="submit">Excluir</button>
+                            </form>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state compact">
+                    <p>Nenhum atendimento veterinário registrado.</p>
+                </div>
+            {% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}

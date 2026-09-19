@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Resgate Animal{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="topbar">
+        <div class="container nav">
+            <a class="brand" href="{{ url_for('dashboard') }}">
+                <span class="brand-mark">🐾</span>
+                <span>Resgate Animal</span>
+            </a>
+            <nav>
+                <a href="{{ url_for('dashboard') }}">Início</a>
+                <a href="{{ url_for('listar_animais') }}">Animais</a>
+                <a href="{{ url_for('adocao') }}">Adoção</a>
+                <a class="button button-small" href="{{ url_for('novo_animal') }}">+ Novo cadastro</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container page">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            Sistema de apoio ao cadastro e gerenciamento de animais resgatados.
+        </div>
+    </footer>
+
+    <script>
+        function confirmarExclusao(mensagem) {
+            return confirm(mensagem || "Tem certeza que deseja excluir este registro?");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Adoção | Resgate Animal{% endblock %}
+{% block content %}
+<div class="page-heading"><div><span class="eyebrow">Adoção responsável</span><h1>Animais disponíveis para adoção</h1><p>Animais que já podem seguir para um novo lar.</p></div></div>
+{% if animais %}
+<div class="adoption-grid">
+{% for animal in animais %}
+<article class="adoption-card">
+<div class="adoption-photo">{% if animal.foto %}<img src="{{ url_for('static', filename='uploads/' + animal.foto) }}" alt="Foto de {{ animal.nome }}">{% else %}<div class="photo-placeholder">🐾</div>{% endif %}</div>
+<div class="adoption-body"><span class="badge">Disponível para adoção</span><h2>{{ animal.nome }}</h2><p>{{ animal.especie }}{% if animal.raca %} • {{ animal.raca }}{% endif %}</p>
+<div class="adoption-facts"><span>{{ animal.sexo or "Sexo não informado" }}</span><span>{{ animal.idade_aproximada or "Idade não informada" }}</span><span>{{ animal.porte or "Porte não informado" }}</span></div>
+{% if animal.necessidades_especiais %}<p class="adoption-note"><strong>Cuidados:</strong> {{ animal.necessidades_especiais }}</p>{% endif %}
+<a class="button" href="{{ url_for('detalhe_animal', animal_id=animal.id) }}">Ver ficha completa</a></div></article>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state panel"><div class="empty-icon">🏠</div><h2>Nenhum animal disponível neste momento</h2><p>Ao marcar um animal como “Disponível para adoção”, ele aparecerá automaticamente aqui.</p></div>
+{% endif %}
+{% endblock %}

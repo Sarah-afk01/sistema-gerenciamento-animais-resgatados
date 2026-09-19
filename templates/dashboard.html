@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Início | Resgate Animal{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div>
+        <span class="eyebrow">Gestão de resgates</span>
+        <h1>Organize informações dos animais em um só lugar.</h1>
+        <p>Cadastre resgates, acompanhe atendimentos veterinários e mantenha a situação de adoção atualizada.</p>
+        <a class="button" href="{{ url_for('novo_animal') }}">Cadastrar animal</a>
+    </div>
+</section>
+
+<section class="cards">
+    <article class="stat-card">
+        <span>Total cadastrados</span>
+        <strong>{{ total }}</strong>
+    </article>
+    <article class="stat-card">
+        <span>Em tratamento</span>
+        <strong>{{ tratamento }}</strong>
+    </article>
+    <article class="stat-card">
+        <span>Disponíveis para adoção</span>
+        <strong>{{ disponiveis }}</strong>
+    </article>
+    <article class="stat-card">
+        <span>Adotados</span>
+        <strong>{{ adotados }}</strong>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <span class="eyebrow">Últimos registros</span>
+            <h2>Animais cadastrados recentemente</h2>
+        </div>
+        <a href="{{ url_for('listar_animais') }}">Ver todos →</a>
+    </div>
+
+    {% if recentes %}
+        <div class="animal-grid">
+            {% for animal in recentes %}
+                <a class="animal-card" href="{{ url_for('detalhe_animal', animal_id=animal.id) }}">
+                    <div class="animal-photo">
+                        {% if animal.foto %}
+                            <img src="{{ url_for('static', filename='uploads/' + animal.foto) }}" alt="Foto de {{ animal.nome }}">
+                        {% else %}
+                            <div class="photo-placeholder">🐾</div>
+                        {% endif %}
+                    </div>
+                    <div class="animal-card-body">
+                        <h3>{{ animal.nome }}</h3>
+                        <p>{{ animal.especie }}{% if animal.raca %} • {{ animal.raca }}{% endif %}</p>
+                        <span class="badge">{{ animal.status }}</span>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🐶</div>
+            <h3>Nenhum animal cadastrado ainda</h3>
+            <p>Cadastre o primeiro resgate para começar a utilizar o sistema.</p>
+            <a class="button" href="{{ url_for('novo_animal') }}">Fazer primeiro cadastro</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

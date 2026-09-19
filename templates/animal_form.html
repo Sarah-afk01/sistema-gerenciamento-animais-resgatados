@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}{% if editando %}Editar{% else %}Novo animal{% endif %} | Resgate Animal{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">{% if editando %}Atualização de cadastro{% else %}Novo resgate{% endif %}</span>
+        <h1>{% if editando %}Editar animal{% else %}Cadastrar animal resgatado{% endif %}</h1>
+        <p>Preencha as informações disponíveis. Nome e espécie são obrigatórios.</p>
+    </div>
+</div>
+
+<form class="panel form-card" method="POST" enctype="multipart/form-data">
+    <h2>Identificação</h2>
+    <div class="form-grid">
+        <div class="field">
+            <label for="nome">Nome *</label>
+            <input required type="text" id="nome" name="nome" value="{{ animal['nome'] if animal else '' }}">
+        </div>
+
+        <div class="field">
+            <label for="especie">Espécie *</label>
+            <select required id="especie" name="especie">
+                <option value="">Selecione</option>
+                {% for item in ["Cão", "Gato", "Outro"] %}
+                    <option value="{{ item }}" {% if animal and animal['especie'] == item %}selected{% endif %}>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="raca">Raça</label>
+            <input type="text" id="raca" name="raca" value="{{ animal['raca'] if animal else '' }}">
+        </div>
+
+        <div class="field">
+            <label for="sexo">Sexo</label>
+            <select id="sexo" name="sexo">
+                <option value="">Não informado</option>
+                {% for item in ["Fêmea", "Macho"] %}
+                    <option value="{{ item }}" {% if animal and animal['sexo'] == item %}selected{% endif %}>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="idade_aproximada">Idade aproximada</label>
+            <input type="text" id="idade_aproximada" name="idade_aproximada" placeholder="Ex.: 2 anos" value="{{ animal['idade_aproximada'] if animal else '' }}">
+        </div>
+
+        <div class="field">
+            <label for="porte">Porte</label>
+            <select id="porte" name="porte">
+                <option value="">Não informado</option>
+                {% for item in ["Pequeno", "Médio", "Grande"] %}
+                    <option value="{{ item }}" {% if animal and animal['porte'] == item %}selected{% endif %}>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="cor">Cor</label>
+            <input type="text" id="cor" name="cor" value="{{ animal['cor'] if animal else '' }}">
+        </div>
+
+        <div class="field">
+            <label for="foto">Foto</label>
+            <input type="file" id="foto" name="foto" accept=".png,.jpg,.jpeg,.webp">
+            <small>PNG, JPG, JPEG ou WEBP. Máximo de 4 MB.</small>
+        </div>
+    </div>
+
+    <hr>
+
+    <h2>Dados do resgate</h2>
+    <div class="form-grid">
+        <div class="field">
+            <label for="data_resgate">Data do resgate</label>
+            <input type="date" id="data_resgate" name="data_resgate" value="{{ animal['data_resgate'] if animal else '' }}">
+        </div>
+
+        <div class="field">
+            <label for="local_resgate">Local do resgate</label>
+            <input type="text" id="local_resgate" name="local_resgate" placeholder="Bairro, rua ou referência" value="{{ animal['local_resgate'] if animal else '' }}">
+        </div>
+
+        <div class="field full">
+            <label for="condicoes_resgate">Condições no momento do resgate</label>
+            <textarea id="condicoes_resgate" name="condicoes_resgate" rows="4">{{ animal['condicoes_resgate'] if animal else '' }}</textarea>
+        </div>
+    </div>
+
+    <hr>
+
+    <h2>Acompanhamento</h2>
+    <div class="form-grid">
+        <div class="field">
+            <label for="status">Situação atual</label>
+            <select id="status" name="status">
+                {% for opcao in status_options %}
+                    <option value="{{ opcao }}" {% if animal and animal['status'] == opcao %}selected{% endif %}>{{ opcao }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="responsavel">Responsável</label>
+            <input type="text" id="responsavel" name="responsavel" value="{{ animal['responsavel'] if animal else '' }}">
+        </div>
+
+        <div class="field">
+            <label for="contato_responsavel">Contato do responsável</label>
+            <input type="text" id="contato_responsavel" name="contato_responsavel" value="{{ animal['contato_responsavel'] if animal else '' }}">
+        </div>
+
+        <div class="field"><label for="castrado">Castrado</label><select id="castrado" name="castrado">{% for item in ["Não informado", "Sim", "Não"] %}<option value="{{ item }}" {% if animal and animal['castrado'] == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></div>
+        <div class="field"><label for="vacinado">Vacinação em dia</label><select id="vacinado" name="vacinado">{% for item in ["Não informado", "Sim", "Não", "Parcial"] %}<option value="{{ item }}" {% if animal and animal['vacinado'] == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></div>
+        <div class="field"><label for="vermifugado">Vermifugado</label><select id="vermifugado" name="vermifugado">{% for item in ["Não informado", "Sim", "Não"] %}<option value="{{ item }}" {% if animal and animal['vermifugado'] == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></div>
+        <div class="field"><label for="microchip">Microchip</label><input type="text" id="microchip" name="microchip" value="{{ animal['microchip'] if animal else '' }}"></div>
+        <div class="field full"><label for="necessidades_especiais">Necessidades especiais / cuidados</label><textarea id="necessidades_especiais" name="necessidades_especiais" rows="3">{{ animal['necessidades_especiais'] if animal else '' }}</textarea></div>
+
+        <div class="field full adoption-box"><h3>Dados de adoção</h3><p class="helper">Preencha quando houver um adotante definido ou quando o animal for adotado.</p></div>
+        <div class="field"><label for="adotante_nome">Nome do adotante</label><input type="text" id="adotante_nome" name="adotante_nome" value="{{ animal['adotante_nome'] if animal else '' }}"></div>
+        <div class="field"><label for="adotante_contato">Contato do adotante</label><input type="text" id="adotante_contato" name="adotante_contato" value="{{ animal['adotante_contato'] if animal else '' }}"></div>
+        <div class="field"><label for="data_adocao">Data da adoção</label><input type="date" id="data_adocao" name="data_adocao" value="{{ animal['data_adocao'] if animal else '' }}"></div>
+
+        <div class="field full">
+            <label for="observacoes">Observações</label>
+            <textarea id="observacoes" name="observacoes" rows="4">{{ animal['observacoes'] if animal else '' }}</textarea>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a class="button button-secondary" href="{{ url_for('listar_animais') }}">Cancelar</a>
+        <button class="button" type="submit">{% if editando %}Salvar alterações{% else %}Cadastrar animal{% endif %}</button>
+    </div>
+</form>
+{% endblock %}
